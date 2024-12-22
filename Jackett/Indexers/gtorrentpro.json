@@ -1,0 +1,26 @@
+[
+  {
+    "id": "sitelink",
+    "type": "inputstring",
+    "name": "Site Link",
+    "value": "https://gtorrent.club/"
+  },
+  {
+    "id": "cookieheader",
+    "type": "hiddendata",
+    "name": "CookieHeader",
+    "value": "PHPSESSID=9fb9p6hml5n2vc0j4clal13764; dle_user_id=deleted; dle_password=deleted; dle_hash=deleted; cf_clearance=WDiVpeu3hb6zKFHGUYoL7Ie9J5x7W5Xw.Rj9dlSY3cs-1734591766-1.2.1.1-6kQt.U9flShp5R0UbRJuVZ5ypy8mOkSGROx3wD9WX0CgkUop9znw_UI_Z3Cm.aIrrhcRd2FixoZBTC50tLOj2oyJcAud9aMYlGtF5XigDQMhAA99dZrzQEftFhIx21Adqnh7fK9PzpbvJBHXOv2jSwP1BQpGtYM9o7_HkLLkbnVuAs8Xnm15uwGApgPmYI._iOb6te.PqKuI0D2diQM4J_GdB0hHe2Q5Bzyt8kty5Q0lW6upYMxt.Gj_gOBEX2Qtgu.mGiLLjkpKe4RGlsJPOpM1vartXoJmr_dLr2uJ1tSMxZstvNLG.a5SY9EQJPmW0avdiOOzZc5UHtNqNVtL7MqMFviwJg.oWAkAC.aobTZ80R4QkuV.tB1m2VyRSMr3bQ525i4yCdVA6wl3hvMU.scUrnQOKn3Kd_WLggxMoVA"
+  },
+  {
+    "id": "lasterror",
+    "type": "hiddendata",
+    "name": "LastError",
+    "value": null
+  },
+  {
+    "id": "tags",
+    "type": "inputtags",
+    "name": "Tags",
+    "value": ""
+  }
+]

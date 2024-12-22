@@ -1,0 +1,53 @@
+[
+  {
+    "id": "sitelink",
+    "type": "inputstring",
+    "name": "Site Link",
+    "value": "https://www.529055.xyz/"
+  },
+  {
+    "id": "cookieheader",
+    "type": "hiddendata",
+    "name": "CookieHeader",
+    "value": "session=eyJfZnJlc2giOmZhbHNlLCJfcGVybWFuZW50Ijp0cnVlLCJjc3JmX3Rva2VuIjp7IiBiIjoiT0RFeU0yRm1aalJpWWpVell6YzBOemRqWWpOaFpXVXlNbVk0TXpjek9UbG1PRFZqTXprM053PT0ifX0.Z2PFYQ.OL_948SiA7QEUXtnuS2RKz0TL0g; cf_clearance=rSutXFYphHfxpuHvA1MVUHwqCTCYavkNSGBrimlN4oQ-1734591792-1.2.1.1-yiNmCKxMxYRUN5jsq17782aoEygZ6YOY3G3F49.RnDRio3xt8lTjQtwGUJSz_sFC0cC91SuFYF5W3qndCeAJeOBga.AfwjkVsfgmyKxCTqjcoU1..TPovHWlyeddl.KFZ8RZpqZJFDJIwB6b5rCuXQIMeWT1ZOwk2DHAlCuXtwtWQFE_uKemS45u3L250M3yo3BswrPXclu5NWiwtFnU3a7TftoSc4v_LxiYkIF.MYEpbdA1tYddbCarcjTpYdqnXxopo8oBPshYYAsZekdS4ivHxOAeZE0PEe2LZIlse6AMl_UGoHJjJh1U0mYxyXbULMer.xuwSb3R8.EwBmoI27xB8IXFOr73rof9GdDYbSimyom7jvTDrWhq6oO7KKNlzvpReF.wCJ0Owd1sZDUKcyr8Yex_7plR1EDF6tESrNM"
+  },
+  {
+    "id": "lasterror",
+    "type": "hiddendata",
+    "name": "LastError",
+    "value": null
+  },
+  {
+    "id": "category",
+    "type": "inputselect",
+    "name": "Category",
+    "value": "0",
+    "options": {
+      "0": "All categories",
+      "1": "Film and Television",
+      "2": "Music",
+      "3": "Images",
+      "4": "Books",
+      "5": "Zip Files",
+      "6": "Software",
+      "7": "Other"
+    }
+  },
+  {
+    "id": "sortrequestedfromsite",
+    "type": "inputselect",
+    "name": "Sort requested from site",
+    "value": "2",
+    "options": {
+      "2": "created",
+      "1": "size",
+      "0": "relevance"
+    }
+  },
+  {
+    "id": "tags",
+    "type": "inputtags",
+    "name": "Tags",
+    "value": ""
+  }
+]

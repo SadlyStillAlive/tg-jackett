@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sitelink",
+    "type": "inputstring",
+    "name": "Site Link",
+    "value": "https://www26.mejortorrent.eu/"
+  },
+  {
+    "id": "cookieheader",
+    "type": "hiddendata",
+    "name": "CookieHeader",
+    "value": "XSRF-TOKEN=eyJpdiI6IkFxNWJYaUtWMWYvTjlGYno1S1VZMmc9PSIsInZhbHVlIjoiRWFRQnZzQkd6NlRBQUdIcThjbFc4UnI1dzA3eUpJdkZYYzA1UDZ6UW5yYW9rcmJxbUNaR243Ym1uZTFVSWk1c2Nrd2pDWktPc1Y3WmtyNUZUQzVxVStQalgxSGtXdUJURUNSRi9aYThKWDBFSEpnNHNWeUVNWmVMM1BTaHE4eXEiLCJtYWMiOiIwZWExYTQwMGVmMWFkMzYyYWYxMTY2MTg5ZjYxNjYxZTRhN2UzZWM5YzgwM2FlYzdiMTk4MmRhYTUzYzU1ZDBiIiwidGFnIjoiIn0%3D; torrent_session=eyJpdiI6ImRHc0Fpd0NSaVdYYjMvYTlMOHN2Mnc9PSIsInZhbHVlIjoicUVpYkQraHJDMzRRMnd3Sld5a1VDaXJCOUEwS0F5RXlaSERaOHkwUmx5VlpvWU94ZVVOMmNLMnZtdGRwcEhLQ0xBeStlWVorK2ppc0Njenp0Unc3RWJsZ1FQYy9tRkFUOUlZV21hSTIydXBFTEdUSjdCN3dDZ0RGUmt5emRQM0giLCJtYWMiOiJiODQ0NDEzMDkzZGVmNDM4MjUwMmE2YjViNmM5YTY0Y2I3MmExYzFiMzk3YjEyYjgzMjZhOTJkNGNmZDBlZGQ3IiwidGFnIjoiIn0%3D"
+  },
+  {
+    "id": "lasterror",
+    "type": "hiddendata",
+    "name": "LastError",
+    "value": null
+  },
+  {
+    "id": "matchwordsintitle",
+    "type": "inputbool",
+    "name": "Match words in title",
+    "value": true
+  },
+  {
+    "id": "tags",
+    "type": "inputtags",
+    "name": "Tags",
+    "value": ""
+  }
+]

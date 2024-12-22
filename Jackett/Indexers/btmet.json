@@ -1,0 +1,37 @@
+[
+  {
+    "id": "sitelink",
+    "type": "inputstring",
+    "name": "Site Link",
+    "value": "https://btmet.com/"
+  },
+  {
+    "id": "cookieheader",
+    "type": "hiddendata",
+    "name": "CookieHeader",
+    "value": "PHPSESSIONID=9AB8529831143DE7FF29022DDA5EA024; cf_clearance=sPTssDgh942_s8s0Na6bpKv6qemhBEs3XbBeZjaL4J8-1734589739-1.2.1.1-1SvDcwu5enEKro3OqvP1.71uMV_0HMswHFa_shS.ERH.8XC1PRMOKe2wJCVPoj3.YRp5Kje1XrqfDdTE6hdeqDfGHrkeHASe6hUT6IcMdAxgumiavjjzHFW.vjdDbgAiPVnHnfZGgKG8sK56QdwQfOFLa0.fQ4qHeANXODuT5xymAmKo6JMVrafWtT0zPwoiIHYcypY5jiMRygR.200GF9.A82YSECrrRlZIyAMZbzGZDgJwqhYINmYJP8KENl04gLAS0_Ies7KESddqscurvruKi0NijbQucIl5zDM_jzeEA2CFizlgRjobqvcGy4FKBWWDxH4.JMBIqyf6AUvh3HkuwV1_8ZOqhKJAUg_2q2y6KLGJzk5skmjJxsUBznSYgQaxv1y_V6gLYia5sGbS.dctBeFiIJqHopfuM.RiZZg"
+  },
+  {
+    "id": "lasterror",
+    "type": "hiddendata",
+    "name": "LastError",
+    "value": null
+  },
+  {
+    "id": "sortrequestedfromsite",
+    "type": "inputselect",
+    "name": "Sort requested from site",
+    "value": "0",
+    "options": {
+      "0": "relevance",
+      "1": "created",
+      "2": "size"
+    }
+  },
+  {
+    "id": "tags",
+    "type": "inputtags",
+    "name": "Tags",
+    "value": ""
+  }
+]
