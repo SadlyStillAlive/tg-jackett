@@ -1,0 +1,26 @@
+[
+  {
+    "id": "sitelink",
+    "type": "inputstring",
+    "name": "Site Link",
+    "value": "https://torrentsir161.com/"
+  },
+  {
+    "id": "cookieheader",
+    "type": "hiddendata",
+    "name": "CookieHeader",
+    "value": "1d3a86ea03883e2fb31af34d955f931c=07de33fd0e2025b2374949c5a02b0f26; PHPSESSID=n0q1jshci99dqutu1pop8j2732; 2a0d2363701f23f8a75028924a3af643=MTA0LjI4LjIzMi45Ng%3D%3D; 1859aa284f2cd987e9e27c8c7ac1245a=f9467cb90367cf044d99f26a89688ff1; 95abf835be2226a1bc9536fdb9ca340a=2ae70dbdbc42f3b41d998908c86c689c; fc943b62c588acf8d3fda69915d77b41=342a62228b4c909f0d7cc31fd4a3512a"
+  },
+  {
+    "id": "lasterror",
+    "type": "hiddendata",
+    "name": "LastError",
+    "value": null
+  },
+  {
+    "id": "tags",
+    "type": "inputtags",
+    "name": "Tags",
+    "value": ""
+  }
+]
