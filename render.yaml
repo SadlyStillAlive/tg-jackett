@@ -17,8 +17,6 @@ services:
         value: ""
       - key: TZ
         value: "Asia/Kolkata"
-    ports:
-      - port: 9117
     disk:
       name: jackett_config
       mountPath: /config
@@ -33,11 +31,6 @@ services:
       - key: TELEGRAM_BOT_TOKEN
         fromDotEnv: TELEGRAM_BOT_TOKEN
     startCommand: "/shared/process_config.sh"
-    dependsOn:
-      - name: jackett
-        required: true
-    ports:
-      - port: 5000
     disk:
       name: config
       mountPath: /bot_config
