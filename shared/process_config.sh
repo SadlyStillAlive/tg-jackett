@@ -30,7 +30,7 @@ echo "Environment variables saved to /shared/envs/.env"
 
 # Start the Telegram bot
 echo "Starting Telegram bot..."
-python /bot/bot.py
+python /app/bot/bot.py
 
 # Optional: keep container alive for debugging
 tail -f /dev/null
