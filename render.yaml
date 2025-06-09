@@ -18,7 +18,7 @@ services:
       - key: TZ
         value: "Asia/Kolkata"
 
-  - type: worker
+  - type: web
     name: mitsu-tg-bot
     env: docker
     dockerfilePath: Dockerfile.bot
