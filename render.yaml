@@ -31,3 +31,5 @@ services:
         sync: false  # Will use the Render dashboard value
       - key: JACKETT_API_KEY
         sync: false  # Will use the Render dashboard value
+      - key: WEBHOOK_URL
+        sync: false  # Will use the Render dashboard value
