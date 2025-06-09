@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: jackett-indexer-api
+    name: jackett-web-api
     env: docker
     dockerfilePath: Dockerfile.jackett
     plan: free
@@ -19,7 +19,7 @@ services:
         value: "Asia/Kolkata"
 
   - type: web
-    name: mitsu-tg-bot
+    name: tg-search-bot
     env: docker
     dockerfilePath: Dockerfile.bot
     plan: free
