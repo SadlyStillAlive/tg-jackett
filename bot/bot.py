@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 JACKETT_API_KEY = os.getenv("JACKETT_API_KEY")
 DOCKER_JACKETT_URL = os.getenv("JACKETT_API_URL") or "http://0.0.0.0:9117"
-LOCAL_JACKETT_URL = "https://mitsuapp-khv748is.b4a.run"  # Your local Jackett URL
+LOCAL_JACKETT_URL = "https://jackett-ewy7.onrender.com/"  # Your local Jackett URL
 
 if not all([TELEGRAM_BOT_TOKEN, JACKETT_API_KEY]):
     raise EnvironmentError("Missing TELEGRAM_BOT_TOKEN or JACKETT_API_KEY")
