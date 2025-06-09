@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Read required environment variables
-JACKETT_URL="${JACKETT_URL:-}"
+# JACKETT_URL="${JACKETT_URL:-}"
 JACKETT_API_KEY="${JACKETT_API_KEY:-}"
 TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"
 ENV_FILE="/shared/.env"
@@ -22,8 +22,8 @@ if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
   exit 1
 fi
 
-echo "Waiting for Jackett to be available at $JACKETT_URL..."
-until curl --silent --fail "$JACKETT_URL" > /dev/null; do
+echo "Waiting for Jackett to be available at $JACKETT_API_URL..."
+until curl --silent --fail "$JACKETT_API_URL" > /dev/null; do
   echo "Jackett is not available yet. Retrying in 5 seconds..."
   sleep 5
 done
