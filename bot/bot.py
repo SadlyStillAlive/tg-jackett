@@ -8,8 +8,6 @@ from telegram.ext import (
     CommandHandler,
     CallbackQueryHandler,
     ContextTypes,
-    MessageHandler,
-    filters,
 )
 
 load_dotenv("/shared/envs/.env")
@@ -28,6 +26,8 @@ if not all([TELEGRAM_BOT_TOKEN, JACKETT_API_KEY]):
     raise EnvironmentError("Missing TELEGRAM_BOT_TOKEN or JACKETT_API_KEY")
 
 CURRENT_JACKETT_URL = DOCKER_JACKETT_URL  # Default source
+
+RESULTS_PER_PAGE = 2
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -68,18 +68,32 @@ async def switch_source(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
         )
 
 
+def format_result(result):
+    title = result.get("Title")
+    size = result.get("Size", 0)
+    size_mb = size / (1024 * 1024)
+    size_str = f"{size_mb:.2f} MB" if size_mb < 1024 else f"{size_mb / 1024:.2f} GB"
+    seeders = result.get("Seeders", 0)
+    link = result.get("MagnetUri") or result.get("Link")
+    return (
+        f"🎬 *{title}*\n"
+        f"📦 Size: {size_str}\n"
+        f"🌱 Seeders: {seeders}\n"
+        f"🔗 [Magnet/Link]({link})"
+    )
+
+
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = " ".join(context.args)
     if not query:
         await update.message.reply_text("Usage: /search <query>")
         return
 
-    # Prepare Jackett API URL
     api_url = f"{CURRENT_JACKETT_URL}/api/v2.0/indexers/all/results"
     params = {
         "apikey": JACKETT_API_KEY,
         "Query": query,
-        "Limit": 10,
+        "Limit": 50,  # Fetch up to 50 results to paginate locally
         "SortBy": "seeders",
         "SortDirection": "desc",
     }
@@ -94,28 +108,72 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             await update.message.reply_text("No results found for your query.")
             return
 
-        messages = []
-        for r in results:
-            title = r.get("Title")
-            size = r.get("Size", 0)
-            # Convert bytes to MB/GB for better readability
-            size_mb = size / (1024 * 1024)
-            size_str = f"{size_mb:.2f} MB" if size_mb < 1024 else f"{size_mb / 1024:.2f} GB"
-            seeders = r.get("Seeders", 0)
-            link = r.get("MagnetUri") or r.get("Link")
+        # Save results & position in user_data
+        context.user_data["search_results"] = results
+        context.user_data["search_pos"] = 0
 
-            msg = f"🎬 *{title}*\n" \
-                  f"📦 Size: {size_str}\n" \
-                  f"🌱 Seeders: {seeders}\n" \
-                  f"🔗 [Magnet/Link]({link})"
-            messages.append(msg)
-
-        reply_text = "\n\n".join(messages)
-        await update.message.reply_text(reply_text, parse_mode="Markdown", disable_web_page_preview=True)
+        # Show first page
+        await show_result_page(update, context)
 
     except requests.RequestException as e:
         logger.error(f"Jackett API error: {e}")
         await update.message.reply_text(f"Error fetching results: {e}")
+
+
+async def show_result_page(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    results = context.user_data.get("search_results", [])
+    pos = context.user_data.get("search_pos", 0)
+
+    if not results:
+        await update.message.reply_text("No search results stored.")
+        return
+
+    # Calculate page slice
+    page_results = results[pos : pos + RESULTS_PER_PAGE]
+    texts = [format_result(r) for r in page_results]
+    reply_text = "\n\n".join(texts)
+
+    # Navigation buttons
+    buttons = []
+    if pos > 0:
+        buttons.append(InlineKeyboardButton("⬅️ Prev", callback_data="page_prev"))
+    if pos + RESULTS_PER_PAGE < len(results):
+        buttons.append(InlineKeyboardButton("Next ➡️", callback_data="page_next"))
+
+    reply_markup = InlineKeyboardMarkup([buttons]) if buttons else None
+
+    # Edit or send new message
+    if update.callback_query:
+        await update.callback_query.edit_message_text(
+            reply_text, parse_mode="Markdown", disable_web_page_preview=True, reply_markup=reply_markup
+        )
+        await update.callback_query.answer()
+    else:
+        await update.message.reply_text(
+            reply_text, parse_mode="Markdown", disable_web_page_preview=True, reply_markup=reply_markup
+        )
+
+
+async def paginate_results(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    query = update.callback_query
+    await query.answer()
+
+    pos = context.user_data.get("search_pos", 0)
+    results = context.user_data.get("search_results", [])
+
+    if not results:
+        await query.edit_message_text("No active search to paginate.")
+        return
+
+    if query.data == "page_next":
+        pos = min(pos + RESULTS_PER_PAGE, len(results) - RESULTS_PER_PAGE)
+    elif query.data == "page_prev":
+        pos = max(pos - RESULTS_PER_PAGE, 0)
+
+    context.user_data["search_pos"] = pos
+
+    # Show updated page
+    await show_result_page(update, context)
 
 
 async def info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -137,6 +195,7 @@ def main():
     application.add_handler(CommandHandler("info", info))
     application.add_handler(CommandHandler("stop", stop))
     application.add_handler(CallbackQueryHandler(switch_source, pattern="switch_.*"))
+    application.add_handler(CallbackQueryHandler(paginate_results, pattern="page_.*"))
 
     print("Bot is running...")
     application.run_polling()
