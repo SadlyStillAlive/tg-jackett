@@ -2,13 +2,14 @@
 
 # Read required environment variables
 # JACKETT_URL="${JACKETT_URL:-}"
+JACKETT_API_URL="${JACKETT_API_URL:-}"
 JACKETT_API_KEY="${JACKETT_API_KEY:-}"
 TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"
-ENV_FILE="/shared/.env"
+ENV_FILE="/app/shared/.env"
 
 # Check required env vars
-if [ -z "$JACKETT_URL" ]; then
-  echo "Error: JACKETT_URL environment variable not set. Exiting."
+if [ -z "$JACKETT_API_URL" ]; then
+  echo "Error: JACKETT_API_URL environment variable not set. Exiting."
   exit 1
 fi
 
@@ -31,7 +32,7 @@ echo "Jackett is up!"
 
 echo "Writing environment variables to $ENV_FILE..."
 {
-  echo "JACKETT_API_URL=$JACKETT_URL"
+  echo "JACKETT_API_URL=$JACKETT_API_URL"
   echo "JACKETT_API_KEY=$JACKETT_API_KEY"
   echo "TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN"
 } > "$ENV_FILE"
@@ -40,10 +41,10 @@ echo "Environment setup complete:"
 cat "$ENV_FILE"
 
 # Run the bot startup script
-if [ -f "/shared/process_config.sh" ]; then
-  chmod +x /shared/process_config.sh
+if [ -f "/app/shared/process_config.sh" ]; then
+  chmod +x /app/shared/process_config.sh
   echo "Running process_config.sh..."
-  exec /shared/process_config.sh
+  exec /app/shared/process_config.sh
 else
   echo "Error: process_config.sh not found. Exiting."
   exit 1
