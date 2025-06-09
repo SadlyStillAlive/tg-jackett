@@ -17,9 +17,6 @@ services:
         value: ""
       - key: TZ
         value: "Asia/Kolkata"
-    disk:
-      name: jackett_config
-      mountPath: /config
 
   - type: web
     name: mitsu-tg-indexer
@@ -29,8 +26,4 @@ services:
     autoDeploy: true
     envVars:
       - key: TELEGRAM_BOT_TOKEN
-        fromDotEnv: TELEGRAM_BOT_TOKEN
-    startCommand: "/shared/process_config.sh"
-    disk:
-      name: config
-      mountPath: /bot_config
+        value: "your-real-token-here"  # or leave it blank and set in dashboard
