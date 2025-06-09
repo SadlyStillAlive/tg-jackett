@@ -1,32 +1,43 @@
 services:
-  - name: jackett
-    type: web
+  - type: web
+    name: jackett
     env: docker
-    docker:
-      image: linuxserver/jackett:latest
-      dockerfilePath: Dockerfile
-      buildContext: .
-      dockerCommand: /jackett --NoRestart
+    dockerfilePath: Dockerfile.jackett
     plan: free
-    branches: ["main", "dev"]
-    healthCheckPath: /health
-    maxShutdownDelaySeconds: 60
+    healthCheckPath: /
+    autoDeploy: true
     envVars:
-      - key: TZ
-        value: Asia/Kolkata
       - key: PUID
         value: "1000"
       - key: PGID
         value: "1000"
-    volumes:
-      - /mnt/data/jackett/config:/config
-      - /mnt/data/jackett/downloads:/downloads
-    networks:
-      - traefik_proxy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.backend=jackett"
-      - "traefik.frontend.rule=Host:jackett.${DOMAINNAME}"
-      - "traefik.docker.network=traefik_proxy"
+      - key: AUTO_UPDATE
+        value: "true"
+      - key: RUN_OPTS
+        value: ""
+      - key: TZ
+        value: "Asia/Kolkata"
     ports:
-      - "9117:9117"
+      - port: 9117
+    disk:
+      name: jackett_config
+      mountPath: /config
+
+  - type: web
+    name: mitsu-tg-indexer
+    env: docker
+    dockerfilePath: Dockerfile.bot
+    plan: free
+    autoDeploy: true
+    envVars:
+      - key: TELEGRAM_BOT_TOKEN
+        fromDotEnv: TELEGRAM_BOT_TOKEN
+    startCommand: "/shared/process_config.sh"
+    dependsOn:
+      - name: jackett
+        required: true
+    ports:
+      - port: 5000
+    disk:
+      name: config
+      mountPath: /bot_config
