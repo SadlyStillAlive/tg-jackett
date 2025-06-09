@@ -26,4 +26,4 @@ services:
     autoDeploy: true
     envVars:
       - key: TELEGRAM_BOT_TOKEN
-        value: "your-real-token-here"  # or leave it blank and set in dashboard
+        value: ""  # or leave it blank and set in dashboard
