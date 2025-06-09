@@ -29,7 +29,7 @@ EOF
 echo "Environment variables saved to /app/shared/envs/.env"
 
 # Start the Telegram bot
-echo "Starting Telegram bot..."
+echo "Starting Telegram bot via webhook mode..."
 python /app/bot/bot.py
 echo "Succesfully deployed the bot
 
