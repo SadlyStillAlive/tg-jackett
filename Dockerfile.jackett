@@ -1,0 +1,5 @@
+# Dockerfile.jackett
+FROM lscr.io/linuxserver/jackett:latest
+
+# Expose Jackett's default web port
+EXPOSE 9117
