@@ -1,7 +1,9 @@
 import os
 import logging
 import requests
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from dotenv import load_dotenv
+from aiohttp import web
+from telegram import Update, Bot, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     Application,
     CommandHandler,
@@ -9,29 +11,25 @@ from telegram.ext import (
     ContextTypes,
 )
 
-# Setup logging
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
-)
+load_dotenv("/shared/envs/.env")
+
+logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Read env vars from the environment (set via Render Dashboard)
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 JACKETT_API_KEY = os.getenv("JACKETT_API_KEY")
 JACKETT_API_URL = os.getenv("JACKETT_API_URL")
+WEBHOOK_URL = os.getenv("WEBHOOK_URL")
 
-if not all([TELEGRAM_BOT_TOKEN, JACKETT_API_KEY, JACKETT_API_URL]):
-    raise EnvironmentError(
-        "Missing environment variables: TELEGRAM_BOT_TOKEN, JACKETT_API_KEY, or JACKETT_API_URL"
-    )
+if not all([TELEGRAM_BOT_TOKEN, JACKETT_API_KEY, JACKETT_API_URL, WEBHOOK_URL]):
+    raise EnvironmentError("Missing required environment variables.")
 
 RESULTS_PER_PAGE = 2
 
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
-        "Welcome to Jackett Search Bot!\n"
-        "Use /search <query> to search."
-    )
+    await update.message.reply_text("Welcome to Jackett Search Bot!\nUse /search <query> to search.")
+
 
 def format_result(result):
     title = result.get("Title")
@@ -46,6 +44,7 @@ def format_result(result):
         f"🌱 Seeders: {seeders}\n"
         f"🔗 [Magnet/Link]({link})"
     )
+
 
 async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     query = " ".join(context.args)
@@ -66,32 +65,23 @@ async def search(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         response = requests.get(api_url, params=params, timeout=10)
         response.raise_for_status()
         data = response.json()
-
-        results = data.get("Results")
+        results = data.get("Results", [])
         if not results:
-            await update.message.reply_text("No results found for your query.")
+            await update.message.reply_text("No results found.")
             return
 
         context.user_data["search_results"] = results
         context.user_data["search_pos"] = 0
-
         await show_result_page(update, context)
+    except Exception as e:
+        logger.error(f"Search error: {e}")
+        await update.message.reply_text(f"Error: {e}")
 
-    except requests.RequestException as e:
-        logger.error(f"Jackett API error: {e}")
-        await update.message.reply_text(f"Error fetching results: {e}")
 
-async def show_result_page(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def show_result_page(update: Update, context: ContextTypes.DEFAULT_TYPE):
     results = context.user_data.get("search_results", [])
     pos = context.user_data.get("search_pos", 0)
-
-    if not results:
-        await update.message.reply_text("No search results stored.")
-        return
-
-    page_results = results[pos : pos + RESULTS_PER_PAGE]
-    texts = [format_result(r) for r in page_results]
-    reply_text = "\n\n".join(texts)
+    page_results = results[pos:pos + RESULTS_PER_PAGE]
 
     buttons = []
     if pos > 0:
@@ -100,6 +90,7 @@ async def show_result_page(update: Update, context: ContextTypes.DEFAULT_TYPE) -
         buttons.append(InlineKeyboardButton("Next ➡️", callback_data="page_next"))
 
     reply_markup = InlineKeyboardMarkup([buttons]) if buttons else None
+    reply_text = "\n\n".join(format_result(r) for r in page_results)
 
     if update.callback_query:
         await update.callback_query.edit_message_text(
@@ -111,45 +102,71 @@ async def show_result_page(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             reply_text, parse_mode="Markdown", disable_web_page_preview=True, reply_markup=reply_markup
         )
 
-async def paginate_results(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+
+async def paginate(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
-    await query.answer()
-
     pos = context.user_data.get("search_pos", 0)
-    results = context.user_data.get("search_results", [])
-
-    if not results:
-        await query.edit_message_text("No active search to paginate.")
-        return
-
     if query.data == "page_next":
-        pos = min(pos + RESULTS_PER_PAGE, len(results) - RESULTS_PER_PAGE)
+        context.user_data["search_pos"] = pos + RESULTS_PER_PAGE
     elif query.data == "page_prev":
-        pos = max(pos - RESULTS_PER_PAGE, 0)
-
-    context.user_data["search_pos"] = pos
+        context.user_data["search_pos"] = max(0, pos - RESULTS_PER_PAGE)
     await show_result_page(update, context)
 
+
 async def info(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text(
-        f"Current Jackett source URL:\n`{JACKETT_API_URL}`", parse_mode="Markdown"
-    )
+    await update.message.reply_text(f"Jackett URL:\n`{JACKETT_API_URL}`", parse_mode="Markdown")
+
 
 async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Stopping the bot...")
-    context.application.stop()
+    await update.message.reply_text("Bot stopping...")
+    await context.application.shutdown()
+
+
+async def health_check(request):
+    return web.Response(text="OK", status=200)
+
+
+async def handle_webhook(request: web.Request) -> web.Response:
+    bot = request.app["bot"]
+    application = request.app["app"]
+    data = await request.json()
+    update = Update.de_json(data, bot)
+    await application.update_queue.put(update)
+    return web.Response(text="ok")
+
+
+async def on_startup(app: web.Application):
+    bot = app["bot"]
+    await bot.set_webhook(WEBHOOK_URL)
+
+
+async def on_cleanup(app: web.Application):
+    bot = app["bot"]
+    await bot.delete_webhook()
+
 
 def main():
-    application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
+    bot = Bot(token=TELEGRAM_BOT_TOKEN)
+    application = Application.builder().bot(bot).build()
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("search", search))
     application.add_handler(CommandHandler("info", info))
     application.add_handler(CommandHandler("stop", stop))
-    application.add_handler(CallbackQueryHandler(paginate_results, pattern="page_.*"))
+    application.add_handler(CallbackQueryHandler(paginate, pattern="page_.*"))
 
-    print("Bot is running...")
-    application.run_polling()
+    app = web.Application()
+    app["bot"] = bot
+    app["app"] = application
+
+    app.router.add_post(f"/{TELEGRAM_BOT_TOKEN}", handle_webhook)
+    app.router.add_get("/ping", health_check)
+
+    app.on_startup.append(on_startup)
+    app.on_cleanup.append(on_cleanup)
+
+    web.run_app(app, host="0.0.0.0", port=int(os.getenv("PORT", 5000)))
+
 
 if __name__ == "__main__":
     main()
