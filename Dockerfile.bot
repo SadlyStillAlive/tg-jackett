@@ -13,10 +13,11 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy bot code and config scripts
-COPY bot/ /app/bot
+COPY bot/app.py /app/bot/app.py
 COPY shared/entrypoint.sh /app/shared/entrypoint.sh
 COPY shared/process_config.sh /app/shared/process_config.sh
 COPY requirements.txt /app/bot/requirements.txt
+COPY Jackett/ /app/Jackett/
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r /app/bot/requirements.txt
