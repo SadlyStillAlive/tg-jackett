@@ -1,7 +1,7 @@
 # #!/bin/bash
 #!/bin/bash
 
-JACKETT_URL="https://mitsu-tg-indexer.onrender.com"  # Replace with your actual URL
+JACKETT_URL="https://jackett-ewy7.onrender.com"  # Replace with your actual URL
 CONFIG_ENDPOINT="$JACKETT_URL/ServerConfig.json"
 ENV_FILE="/shared/.env"
 
