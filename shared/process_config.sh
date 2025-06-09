@@ -17,20 +17,21 @@ if [ -z "$TELEGRAM_BOT_TOKEN" ]; then
 fi
 
 # Optional: create shared/envs directory if you want to keep a copy
-mkdir -p /shared/envs
+mkdir -p /app/shared/envs
 
 # Save variables to .env file for reference (optional)
-cat <<EOF > /shared/envs/.env
+cat <<EOF > /app/shared/envs/.env
 JACKETT_API_KEY=$JACKETT_API_KEY
 JACKETT_API_URL=$JACKETT_API_URL
 TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN
 EOF
 
-echo "Environment variables saved to /shared/envs/.env"
+echo "Environment variables saved to /app/shared/envs/.env"
 
 # Start the Telegram bot
 echo "Starting Telegram bot..."
 python /app/bot/bot.py
+echo "Succesfully deployed the bot
 
 # Optional: keep container alive for debugging
 tail -f /dev/null
