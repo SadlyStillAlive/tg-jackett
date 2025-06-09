@@ -1,0 +1,28 @@
+# Dockerfile.bot
+
+# Use Python as a base image
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies (optional, adjust as needed)
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
+# Copy bot source code
+COPY ./bot /app/bot
+COPY ./shared /shared
+
+# Copy any config or startup script
+COPY process_config.sh /shared/process_config.sh
+RUN chmod +x /shared/process_config.sh
+
+# Install Python dependencies (if any)
+COPY ./bot/requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+# Expose port for the bot’s API
+EXPOSE 5000
+
+# Default command (overridden in render.yaml)
+CMD ["/shared/process_config.sh"]
