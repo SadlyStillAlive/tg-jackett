@@ -30,6 +30,7 @@ until curl --silent --fail "$JACKETT_API_URL" > /dev/null; do
 done
 echo "Jackett is up!"
 
+# printing the env variables on screen
 echo "Writing environment variables to $ENV_FILE..."
 {
   echo "JACKETT_API_URL=$JACKETT_API_URL"
@@ -39,6 +40,15 @@ echo "Writing environment variables to $ENV_FILE..."
 
 echo "Environment setup complete:"
 cat "$ENV_FILE"
+
+# Save to env file
+mkdir -p /shared/envs
+cat <<EOF > /shared/envs/.env
+JACKETT_API_KEY=$JACKETT_API_KEY
+JACKETT_API_URL=$JACKETT_API_URL
+TELEGRAM_BOT_TOKEN=$TELEGRAM_BOT_TOKEN
+WEBHOOK_URL=$WEBHOOK_URL
+EOF
 
 # Run the bot startup script
 if [ -f "/app/shared/process_config.sh" ]; then
